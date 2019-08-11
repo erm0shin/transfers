@@ -1,13 +1,17 @@
 package ru.banking
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.ktor.http.*
-import com.fasterxml.jackson.databind.*
-import io.ktor.jackson.*
-import io.ktor.features.*
+import com.fasterxml.jackson.databind.SerializationFeature
+import controllers.customerController
+import controllers.transferController
+import database.DatabaseFactory
+import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
+import io.ktor.jackson.jackson
+import ru.banking.repositories.CustomerRepository
+import ru.banking.repositories.WalletRepository
+import ru.banking.services.CustomerService
+import ru.banking.services.TransferService
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -20,14 +24,13 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
+    DatabaseFactory.init()
+    val customerRepository = CustomerRepository()
+    val walletRepository = WalletRepository()
+    val customerService = CustomerService(customerRepository, walletRepository)
+    val transferService = TransferService(walletRepository)
 
-        get("/json/jackson") {
-            call.respond(mapOf("hello" to "world"))
-        }
-    }
+    customerController(customerService)
+    transferController(transferService)
 }
 
