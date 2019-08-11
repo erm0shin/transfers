@@ -26,6 +26,8 @@ class CustomerService(
     suspend fun getCustomerWithWallets(customerId: Long): CustomerDTO? {
         val customers = customerRepository.getCustomerWithWallets(customerId)
         return if (customers?.size == 0) {
+            // think that kotlin.exposed was not the best choice
+            // if customer has no wallets, left join returns empty result set
             val customer = customerRepository.getCustomer(customerId)
             if (customer != null) CustomerDTO(customer) else null
         } else {

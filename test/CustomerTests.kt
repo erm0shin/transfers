@@ -136,18 +136,20 @@ class CustomerTests {
         }
 
         // get customer with 3 wallets
-        var walletId: Long
+        var firstWalletId: Long
+        val secondWalletId: Long
         withTestApplication({ module(testing = true) }) {
             handleRequest(HttpMethod.Get, "/customers/$customerId")
         }.apply {
             assertEquals(HttpStatusCode.OK, response.status())
             val customer = json.parse(CustomerDTO.serializer(), response.content!!)
-            walletId = customer.wallets!![1].id!!
+            firstWalletId = customer.wallets!![1].id!!
+            secondWalletId = customer.wallets!![2].id!!
         }
 
         // delete one wallet
         withTestApplication({ module(testing = true) }) {
-            handleRequest(HttpMethod.Delete, "/wallets/$walletId")
+            handleRequest(HttpMethod.Delete, "/wallets/$firstWalletId")
         }.apply {
             assertEquals(HttpStatusCode.OK, response.status())
         }
@@ -159,7 +161,7 @@ class CustomerTests {
             assertEquals(HttpStatusCode.OK, response.status())
             val customer = json.parse(CustomerDTO.serializer(), response.content!!)
             assertEquals(customer.wallets!!.size, 2)
-            assertNull(customer.wallets!!.find { it.id == walletId })
+            assertNull(customer.wallets!!.find { it.id == firstWalletId })
         }
 
         // delete customer
@@ -172,6 +174,13 @@ class CustomerTests {
         // get no customer
         withTestApplication({ module(testing = true) }) {
             handleRequest(HttpMethod.Get, "/customers/$customerId")
+        }.apply {
+            assertEquals(HttpStatusCode.NoContent, response.status())
+        }
+
+        // get no wallet
+        withTestApplication({ module(testing = true) }) {
+            handleRequest(HttpMethod.Get, "/wallets/$secondWalletId")
         }.apply {
             assertEquals(HttpStatusCode.NoContent, response.status())
         }

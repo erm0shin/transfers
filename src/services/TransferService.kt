@@ -12,6 +12,7 @@ import ru.banking.utils.ExchangeRates
 class TransferService(
     private val walletRepository: WalletRepository
 ) {
+    // matrix with currency relations
     private val exchangeRates = ExchangeRates()
 
     suspend fun putMoney(payment: OneWayPayment): Wallet? {

@@ -15,9 +15,11 @@ import ru.banking.dto.CustomerDTO
 import ru.banking.dto.WalletDTO
 import ru.banking.services.CustomerService
 
+// maintaining customers and wallets (without money transfers)
 fun Application.customerController(customerService: CustomerService) {
     routing {
 
+        // create customer
         put("/customers") {
             val customerDTO = call.receive<CustomerDTO>()
             val customer = Customer(
@@ -29,6 +31,7 @@ fun Application.customerController(customerService: CustomerService) {
             call.respond(CustomerDTO(customerService.createCustomer(customer)))
         }
 
+        // get all customers
         get("/customers") {
             val customers = ArrayList<CustomerDTO>()
             for (customer in customerService.getAllCustomers())
@@ -36,6 +39,7 @@ fun Application.customerController(customerService: CustomerService) {
             call.respond(customers)
         }
 
+        // get customer by id
         get("/customers/{id}") {
             val customerId = call.parameters["id"]?.toLong()!!
             val customerDTO = customerService.getCustomerWithWallets(customerId)
@@ -46,6 +50,7 @@ fun Application.customerController(customerService: CustomerService) {
             }
         }
 
+        // update customer
         post("/customers") {
             val customerDTO = call.receive<CustomerDTO>()
             if (customerDTO.id == null) call.response.status(HttpStatusCode.BadRequest)
@@ -62,6 +67,7 @@ fun Application.customerController(customerService: CustomerService) {
             }
         }
 
+        // delete by id customer with their wallets
         delete("/customers/{id}") {
             val customerId = call.parameters["id"]?.toLong()!!
             if (customerService.removeCustomer(customerId)) {
@@ -71,6 +77,7 @@ fun Application.customerController(customerService: CustomerService) {
             }
         }
 
+        // get wallet by id
         get("/wallets/{id}") {
             val walletsId = call.parameters["id"]?.toLong()!!
             val wallet = customerService.getWallet(walletsId)
@@ -81,6 +88,7 @@ fun Application.customerController(customerService: CustomerService) {
             }
         }
 
+        // create wallet
         put("/wallets") {
             val walletsDTO = call.receive<Array<WalletDTO>>()
             val wallets = walletsDTO.map {
@@ -98,6 +106,7 @@ fun Application.customerController(customerService: CustomerService) {
             }
         }
 
+        // delete wallet by id
         delete("/wallets/{id}") {
             val walletId = call.parameters["id"]?.toLong()!!
             if (customerService.removeWallet(walletId)) {

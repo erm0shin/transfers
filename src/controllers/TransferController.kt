@@ -18,6 +18,7 @@ import ru.banking.services.TransferService
 fun Application.transferController(transferService: TransferService) {
     routing {
         route("/payments") {
+            // create one-way payment (only with one wallet)
             post("/oneway") {
                 val payment = call.receive<OneWayPayment>()
                 if (payment.walletId == null || payment.amount == null || payment.currency == null)
@@ -35,6 +36,7 @@ fun Application.transferController(transferService: TransferService) {
                 }
             }
 
+            // create two-way payment (with two wallets)
             post("/twoway") {
                 val payment = call.receive<TwoWayPayment>()
                 if (payment.fromWalletId == null || payment.toWalletId == null ||
