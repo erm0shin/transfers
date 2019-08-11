@@ -30,6 +30,6 @@ fun Application.module(testing: Boolean = false) {
     val walletRepository = WalletRepository()
     val customerService = CustomerService(customerRepository, walletRepository)
 
-    route(customerService)
+    customerRouter(customerService)
 }
 

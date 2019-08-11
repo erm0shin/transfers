@@ -1,5 +1,6 @@
 package ru.banking.repositories
 
+import database.DatabaseFactory
 import database.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -42,6 +43,12 @@ class CustomerRepository {
             } get Customers.id).value
         }
         return getCustomer(key)!!
+    }
+
+    suspend fun deleteCustomer(id: Long): Boolean {
+        return dbQuery {
+            Customers.deleteWhere { Customers.id eq id } > 0
+        }
     }
 
     private fun toCustomer(row: ResultRow): Customer =
