@@ -6,8 +6,11 @@ import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.http.*
 import com.fasterxml.jackson.databind.*
+import database.DatabaseFactory
 import io.ktor.jackson.*
 import io.ktor.features.*
+import routing.*
+import ru.banking.repositories.CustomerRepository
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -20,14 +23,9 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
+    DatabaseFactory.init()
+    val customerRepository = CustomerRepository()
 
-        get("/json/jackson") {
-            call.respond(mapOf("hello" to "world"))
-        }
-    }
+    route(customerRepository)
 }
 
