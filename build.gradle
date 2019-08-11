@@ -5,11 +5,13 @@ buildscript {
     
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
     }
 }
 
 apply plugin: 'kotlin'
 apply plugin: 'application'
+apply plugin: 'kotlinx-serialization'
 
 group 'ru.banking'
 version '0.0.1-SNAPSHOT'
@@ -37,5 +39,7 @@ dependencies {
     compile "com.h2database:h2:$h2_version"
     compile "org.jetbrains.exposed:exposed:$exposed_version"
     compile "com.zaxxer:HikariCP:$hikari_version"
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinx_serialization"
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
+    testCompile "io.ktor:ktor-client-json:$ktor_version"
 }

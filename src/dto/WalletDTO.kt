@@ -1,8 +1,10 @@
 package ru.banking.dto
 
+import kotlinx.serialization.Serializable
 import ru.banking.database.Currency
 import ru.banking.database.Wallet
 
+@Serializable
 class WalletDTO(
     val id: Long?,
     val currency: Currency,
