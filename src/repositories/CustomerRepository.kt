@@ -1,14 +1,11 @@
 package ru.banking.repositories
 
-import database.DatabaseFactory
 import database.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import ru.banking.database.Customer
 import ru.banking.database.Customers
 import ru.banking.database.Wallet
 import ru.banking.database.Wallets
-import kotlin.and
 
 class CustomerRepository {
     suspend fun getAllCustomers(): List<Customer> = dbQuery {
@@ -43,6 +40,17 @@ class CustomerRepository {
             } get Customers.id).value
         }
         return getCustomer(key)!!
+    }
+
+    suspend fun updateCustomer(customer: Customer): Boolean {
+        val id = customer.id.value
+        return dbQuery {
+            Customers.update({ Customers.id eq id }) {
+                it[name] = customer.name
+                it[age] = customer.age
+                it[citizenship] = customer.citizenship
+            } > 0
+        }
     }
 
     suspend fun deleteCustomer(id: Long): Boolean {

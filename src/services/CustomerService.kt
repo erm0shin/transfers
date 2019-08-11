@@ -39,6 +39,10 @@ class CustomerService(
         }
     }
 
+    suspend fun updateCustomer(customer: Customer): Boolean {
+        return customerRepository.updateCustomer(customer)
+    }
+
     suspend fun removeCustomer(customerId: Long): Boolean {
         return DatabaseFactory.dbQuery {
             runBlocking {
@@ -47,6 +51,10 @@ class CustomerService(
                 customerRepository.deleteCustomer(customerId)
             }
         }
+    }
+
+    suspend fun getWallet(walletId: Long): Wallet? {
+        return walletRepository.getWallet(walletId)
     }
 
     suspend fun addWalletsToCustomer(wallets: List<Wallet>) {

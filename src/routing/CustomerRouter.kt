@@ -5,10 +5,7 @@ import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.routing.delete
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.routing
+import io.ktor.routing.*
 import org.jetbrains.exposed.dao.EntityID
 import ru.banking.database.Customer
 import ru.banking.database.Customers
@@ -21,7 +18,7 @@ import ru.banking.services.CustomerService
 fun Application.customerRouter(customerService: CustomerService) {
     routing {
 
-        post("/customers") {
+        put("/customers") {
             val customerDTO = call.receive<CustomerDTO>()
             val customer = Customer(
                 EntityID(0L, Customers),
@@ -49,6 +46,22 @@ fun Application.customerRouter(customerService: CustomerService) {
             }
         }
 
+        post("/customers") {
+            val customerDTO = call.receive<CustomerDTO>()
+            if (customerDTO.id == null) call.response.status(HttpStatusCode.BadRequest)
+            val customer = Customer(
+                EntityID(customerDTO.id, Customers),
+                customerDTO.name,
+                customerDTO.age,
+                customerDTO.citizenship
+            )
+            if (customerService.updateCustomer(customer)) {
+                call.response.status(HttpStatusCode.OK)
+            } else {
+                call.response.status(HttpStatusCode.BadRequest)
+            }
+        }
+
         delete("/customers/{id}") {
             val customerId = call.parameters["id"]?.toLong()!!
             if (customerService.removeCustomer(customerId)) {
@@ -58,7 +71,17 @@ fun Application.customerRouter(customerService: CustomerService) {
             }
         }
 
-        post("/wallets") {
+        get("/wallets/{id}") {
+            val walletsId = call.parameters["id"]?.toLong()!!
+            val wallet = customerService.getWallet(walletsId)
+            if (wallet != null) {
+                call.respond(WalletDTO(wallet))
+            } else {
+                call.response.status(HttpStatusCode.NoContent)
+            }
+        }
+
+        put("/wallets") {
             val walletsDTO = call.receive<Array<WalletDTO>>()
             val wallets = walletsDTO.map {
                 Wallet(
