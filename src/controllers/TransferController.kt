@@ -20,7 +20,7 @@ fun Application.transferController(transferService: TransferService) {
         route("/payments") {
             post("/oneway") {
                 val payment = call.receive<OneWayPayment>()
-                if (payment.walletId == null || payment.amount == null)
+                if (payment.walletId == null || payment.amount == null || payment.currency == null)
                     call.response.status(HttpStatusCode.BadRequest)
                 try {
                     val wallet = transferService.putMoney(payment)

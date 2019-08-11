@@ -95,7 +95,7 @@ class CustomerTests {
             assertEquals(customer.citizenship, Citizenship.RUS)
             assertEquals(customer.wallets!!.size, 3)
             assertEquals(customer.wallets!![0].currency, Currency.RUB)
-            assertEquals(customer.wallets!![1].ballance, 1000L)
+            assertEquals(customer.wallets!![1].ballance, 1000.0)
             assertEquals(customer.wallets!![2].customerId, customerId)
         }
     }
@@ -257,24 +257,6 @@ class CustomerTests {
             handleRequest(HttpMethod.Delete, "/customers/3000")
         }.apply {
             assertEquals(HttpStatusCode.NoContent, response.status())
-        }
-
-        // create customer
-        var customerId: Long
-        withTestApplication({ module(testing = true) }) {
-            handleRequest(HttpMethod.Put, "/customers") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(
-                    json.stringify(
-                        CustomerDTO.serializer(),
-                        createCustomer()
-                    )
-                )
-            }
-        }.apply {
-            assertEquals(HttpStatusCode.OK, response.status())
-            val customer = json.parse(CustomerDTO.serializer(), response.content!!)
-            customerId = customer.id!!
         }
 
         // create wallets by absent customer

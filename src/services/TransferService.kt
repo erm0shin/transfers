@@ -14,7 +14,7 @@ class TransferService(
 ) {
     private val exchangeRates = ExchangeRates()
 
-    suspend fun putMoney(payment: OneWayPayment, amountCurrency: Currency? = null): Wallet? {
+    suspend fun putMoney(payment: OneWayPayment): Wallet? {
         return DatabaseFactory.dbQuery {
             runBlocking {
                 val wallet = walletRepository.getWallet(payment.walletId!!)
@@ -24,10 +24,10 @@ class TransferService(
                             it.ballance,
                             it.currency,
                             paymentAmount,
-                            amountCurrency ?: it.currency
+                            payment.currency!!
                         ) < 0.0)
                     ) throw RuntimeException("Balance cannot be negative")
-                    it.ballance = changeAmount(it.ballance, it.currency, paymentAmount, amountCurrency ?: it.currency)
+                    it.ballance = changeAmount(it.ballance, it.currency, paymentAmount, payment.currency!!)
                     if (!walletRepository.updateWallet(wallet))
                         throw RuntimeException("Something went wrong. Please try again")
                 }
@@ -39,10 +39,12 @@ class TransferService(
     suspend fun transferMoney(twoWayPayment: TwoWayPayment): List<Wallet>? {
         return DatabaseFactory.dbQuery {
             runBlocking {
-                val reduceMoneyRequest = OneWayPayment(twoWayPayment.fromWalletId, -twoWayPayment.amount!!)
-                val fromWallet = putMoney(reduceMoneyRequest, twoWayPayment.currency!!)
-                val increaseMoneyRequest = OneWayPayment(twoWayPayment.toWalletId, twoWayPayment.amount)
-                val toWallet = putMoney(increaseMoneyRequest, twoWayPayment.currency)
+                val reduceMoneyRequest =
+                    OneWayPayment(twoWayPayment.fromWalletId, -twoWayPayment.amount!!, twoWayPayment.currency)
+                val fromWallet = putMoney(reduceMoneyRequest)
+                val increaseMoneyRequest =
+                    OneWayPayment(twoWayPayment.toWalletId, twoWayPayment.amount, twoWayPayment.currency)
+                val toWallet = putMoney(increaseMoneyRequest)
                 if (fromWallet == null || toWallet == null) {
                     null
                 } else {
