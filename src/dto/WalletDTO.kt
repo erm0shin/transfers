@@ -8,7 +8,7 @@ import ru.banking.database.Wallet
 class WalletDTO(
     val id: Long?,
     val currency: Currency,
-    var ballance: Long = 0L,
+    var ballance: Double = 0.0,
     val customerId: Long
 ) {
     constructor(wallet: Wallet) : this(
@@ -18,7 +18,7 @@ class WalletDTO(
         wallet.customerId
     )
 
-    constructor(currency: Currency, ballance: Long, customerId: Long, id: Long? = null) : this(
+    constructor(currency: Currency, ballance: Double, customerId: Long, id: Long? = null) : this(
         id,
         currency,
         ballance,

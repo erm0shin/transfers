@@ -37,7 +37,9 @@ fun Application.transferController(transferService: TransferService) {
 
             post("/twoway") {
                 val payment = call.receive<TwoWayPayment>()
-                if (payment.fromWalletId == null || payment.toWalletId == null || payment.amount == null)
+                if (payment.fromWalletId == null || payment.toWalletId == null ||
+                    payment.amount == null || payment.currency == null
+                )
                     call.response.status(HttpStatusCode.BadRequest)
                 try {
                     val wallets = transferService.transferMoney(payment)
