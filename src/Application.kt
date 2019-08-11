@@ -11,6 +11,8 @@ import io.ktor.jackson.*
 import io.ktor.features.*
 import routing.*
 import ru.banking.repositories.CustomerRepository
+import ru.banking.repositories.WalletRepository
+import ru.banking.services.CustomerService
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -25,7 +27,9 @@ fun Application.module(testing: Boolean = false) {
 
     DatabaseFactory.init()
     val customerRepository = CustomerRepository()
+    val walletRepository = WalletRepository()
+    val customerService = CustomerService(customerRepository, walletRepository)
 
-    route(customerRepository)
+    route(customerService)
 }
 

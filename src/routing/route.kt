@@ -16,14 +16,15 @@ import ru.banking.database.Customer
 import ru.banking.database.Customers
 import ru.banking.dto.CustomerDTO
 import ru.banking.repositories.CustomerRepository
+import ru.banking.services.CustomerService
 
-fun Application.route(customerRepository: CustomerRepository) {
+fun Application.route(customerService: CustomerService) {
     routing {
         get("/") {
-            var customer = Customer(EntityID(0L, Customers), "Vanya", 20, Citizenship.RUS)
-            customerRepository.addCustomer(customer)
-            customerRepository.addCustomer(customer)
-            customerRepository.addCustomer(customer)
+            //            var customer = Customer(EntityID(0L, Customers), "Vanya", 20, Citizenship.RUS)
+//            customerRepository.addCustomer(customer)
+//            customerRepository.addCustomer(customer)
+//            customerRepository.addCustomer(customer)
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
 
@@ -31,17 +32,34 @@ fun Application.route(customerRepository: CustomerRepository) {
             call.respond(mapOf("hello" to "world"))
         }
 
+        post("/customers") {
+            val customerDTO = call.receive<CustomerDTO>()
+            val customer = Customer(
+                EntityID(0L, Customers),
+                customerDTO.name,
+                customerDTO.age,
+                customerDTO.citizenship
+            )
+            call.respond(CustomerDTO(customerService.createCustomer(customer)))
+        }
+
         get("/customers") {
-            //            call.respond(customerRepository.getAllCustomers())
             val customers = ArrayList<CustomerDTO>()
-            for (customer in customerRepository.getAllCustomers())
+            for (customer in customerService.getAllCustomers())
                 customers.add(CustomerDTO(customer))
             call.respond(customers)
         }
 
         get("/customers/{id}") {
             val customerId = call.parameters["id"]?.toLong()!!
-            customerRepository.getCustomer(customerId)?.let { call.respond(it) }
+            customerService.getCustomer(customerId)?.let {
+                val customer = customerService.getCustomer(customerId)
+                if (customer != null) {
+                    call.respond(CustomerDTO(customer))
+                } else {
+                    call.response.status(HttpStatusCode.NoContent)
+                }
+            }
         }
     }
 }

@@ -1,10 +1,7 @@
 package ru.banking.repositories
 
-import database.DatabaseFactory
 import database.DatabaseFactory.dbQuery
-import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -43,28 +40,3 @@ class CustomerRepository {
             citizenship = row[Customers.citizenship]
         )
 }
-
-
-//import ru.banking.entities.Customer
-//
-//class CustomerRepository {
-//    private var customers = mutableListOf<Customer>()
-//
-//    public fun addCustomer(customer: Customer) {
-//        customers.add(customer)
-//    }
-//
-//    public fun removeCustomer(customer: Customer) {
-//        customers.remove(customer)
-//    }
-//
-//    public fun findCustomer(customerId: Long): Customer? {
-//        return customers.find { it.id == customerId }
-//    }
-//
-//    public fun updateCustomer(customer: Customer) {
-//        for ((index, value) in customers.withIndex()) {
-//            if (value.id == customer.id) customers[index] = customer
-//        }
-//    }
-//}
