@@ -26,7 +26,6 @@ class CustomerRepository {
         ).select {
             (Customers.id eq id) and (Wallets.customerId eq Customers.id)
         }
-//            .groupBy(Customers.id, Customers.name, Customers.age, Customers.citizenship)
             .map { toCustomerWithWallet(it) }
     }
 

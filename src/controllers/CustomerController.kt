@@ -91,8 +91,11 @@ fun Application.customerController(customerService: CustomerService) {
                     it.customerId
                 )
             }
-            customerService.addWalletsToCustomer(wallets)
-            call.response.status(HttpStatusCode.OK)
+            if (customerService.addWalletsToCustomer(wallets)) {
+                call.response.status(HttpStatusCode.OK)
+            } else {
+                call.response.status(HttpStatusCode.BadRequest)
+            }
         }
 
         delete("/wallets/{id}") {

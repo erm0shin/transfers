@@ -17,4 +17,11 @@ class WalletDTO(
         wallet.ballance,
         wallet.customerId
     )
+
+    constructor(currency: Currency, ballance: Long, customerId: Long, id: Long? = null) : this(
+        id,
+        currency,
+        ballance,
+        customerId
+    )
 }

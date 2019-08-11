@@ -26,7 +26,8 @@ class CustomerService(
     suspend fun getCustomerWithWallets(customerId: Long): CustomerDTO? {
         val customers = customerRepository.getCustomerWithWallets(customerId)
         return if (customers?.size == 0) {
-            null
+            val customer = customerRepository.getCustomer(customerId)
+            if (customer != null) CustomerDTO(customer) else null
         } else {
             val firstCustomer = customers?.get(0)!!
             CustomerDTO(firstCustomer, customers.mapNotNull { it.wallet }.map { WalletDTO(it) })
@@ -51,8 +52,17 @@ class CustomerService(
         return walletRepository.getWallet(walletId)
     }
 
-    suspend fun addWalletsToCustomer(wallets: List<Wallet>) {
-        walletRepository.addWallets(wallets)
+    suspend fun addWalletsToCustomer(wallets: List<Wallet>): Boolean {
+        return DatabaseFactory.dbQuery {
+            runBlocking {
+                val customer = getCustomer(wallets[0].customerId)
+                if (customer == null) {
+                    false
+                } else {
+                    walletRepository.addWallets(wallets)
+                }
+            }
+        }
     }
 
     suspend fun removeWallet(walletId: Long): Boolean {

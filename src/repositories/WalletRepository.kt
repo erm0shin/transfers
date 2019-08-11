@@ -29,13 +29,13 @@ class WalletRepository {
         return getWallet(key)!!
     }
 
-    suspend fun addWallets(wallets: List<Wallet>) {
-        dbQuery {
+    suspend fun addWallets(wallets: List<Wallet>): Boolean {
+        return dbQuery {
             Wallets.batchInsert(wallets) { wallet ->
                 this[Wallets.currency] = wallet.currency
                 this[Wallets.ballance] = wallet.ballance
                 this[Wallets.customerId] = wallet.customerId
-            }
+            }.size == wallets.size
         }
     }
 

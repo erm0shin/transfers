@@ -20,8 +20,8 @@ class CustomerDTO(
         wallets
     )
 
-    constructor(name: String, age: Int, citizenship: Citizenship) : this(
-        null,
+    constructor(name: String, age: Int, citizenship: Citizenship, id: Long? = null) : this(
+        id,
         name,
         age,
         citizenship,
