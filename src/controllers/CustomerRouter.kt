@@ -1,4 +1,4 @@
-package routing
+package controllers
 
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -15,7 +15,7 @@ import ru.banking.dto.CustomerDTO
 import ru.banking.dto.WalletDTO
 import ru.banking.services.CustomerService
 
-fun Application.customerRouter(customerService: CustomerService) {
+fun Application.customerController(customerService: CustomerService) {
     routing {
 
         put("/customers") {

@@ -17,12 +17,4 @@ class CustomerDTO(
         customer.citizenship,
         wallets
     )
-
-//    constructor(customer: Customer, wallets: List<WalletDTO>) : this(
-//        customer.id.value,
-//        customer.name,
-//        customer.age,
-//        customer.citizenship,
-//        wallets
-//    )
 }

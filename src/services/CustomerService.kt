@@ -1,14 +1,8 @@
 package ru.banking.services
 
 import database.DatabaseFactory
-import javafx.application.Application.launch
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.dao.EntityID
-import ru.banking.database.Citizenship
 import ru.banking.database.Customer
-import ru.banking.database.Customers
 import ru.banking.database.Wallet
 import ru.banking.dto.CustomerDTO
 import ru.banking.dto.WalletDTO

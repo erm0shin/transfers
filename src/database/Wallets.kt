@@ -14,7 +14,7 @@ object Wallets : LongIdTable() {
 class Wallet(
     id: EntityID<Long>,
     val currency: Currency,
-    val ballance: Long,
+    var ballance: Long,
     val customerId: Long
 ) : LongEntity(id) {
     companion object : LongEntityClass<Wallet>(Wallets)

@@ -1,8 +1,6 @@
 package ru.banking.dto
 
-import ru.banking.database.Citizenship
 import ru.banking.database.Currency
-import ru.banking.database.Customer
 import ru.banking.database.Wallet
 
 class WalletDTO(

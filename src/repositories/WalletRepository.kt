@@ -1,9 +1,7 @@
 package ru.banking.repositories
 
-import database.DatabaseFactory
 import database.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import ru.banking.database.Wallet
 import ru.banking.database.Wallets
 
@@ -38,6 +36,17 @@ class WalletRepository {
                 this[Wallets.ballance] = wallet.ballance
                 this[Wallets.customerId] = wallet.customerId
             }
+        }
+    }
+
+    suspend fun updateWallet(wallet: Wallet): Boolean {
+        val id = wallet.id.value
+        return dbQuery {
+            Wallets.update({ Wallets.id eq id }) {
+                it[currency] = wallet.currency
+                it[ballance] = wallet.ballance
+                it[customerId] = wallet.customerId
+            } > 0
         }
     }
 
