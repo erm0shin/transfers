@@ -6,6 +6,7 @@ import ru.banking.database.Customer
 import ru.banking.database.Customers
 import ru.banking.database.Wallet
 import ru.banking.dto.CustomerDTO
+import ru.banking.dto.WalletDTO
 import ru.banking.repositories.CustomerRepository
 import ru.banking.repositories.WalletRepository
 
@@ -26,4 +27,10 @@ class CustomerService(
     }
 
     suspend fun getAllCustomers(): List<Customer> = customerRepository.getAllCustomers()
+
+    suspend fun getCustomerWithWallets(customerId: Long): CustomerDTO? {
+        val customers = customerRepository.getCustomerWithWallets(customerId)
+        val firstCustomer = customers?.get(0)!!
+        return CustomerDTO(firstCustomer, customers.mapNotNull { it.wallet }.map { WalletDTO(it) })
+    }
 }

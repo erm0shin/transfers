@@ -15,7 +15,8 @@ class Customer(
     id: EntityID<Long>,
     val name: String,
     val age: Int,
-    val citizenship: Citizenship
+    val citizenship: Citizenship,
+    val wallet: Wallet? = null
 ) : LongEntity(id) {
     companion object : LongEntityClass<Customer>(Customers)
 }

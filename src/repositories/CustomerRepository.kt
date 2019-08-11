@@ -1,12 +1,13 @@
 package ru.banking.repositories
 
 import database.DatabaseFactory.dbQuery
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import ru.banking.database.Customer
 import ru.banking.database.Customers
+import ru.banking.database.Wallet
+import ru.banking.database.Wallets
+import kotlin.and
 
 class CustomerRepository {
     suspend fun getAllCustomers(): List<Customer> = dbQuery {
@@ -18,6 +19,17 @@ class CustomerRepository {
             (Customers.id eq id)
         }.mapNotNull { toCustomer(it) }
             .singleOrNull()
+    }
+
+    suspend fun getCustomerWithWallets(id: Long): List<Customer>? = dbQuery {
+        (Customers leftJoin Wallets).slice(
+            Customers.id, Customers.name, Customers.age, Customers.citizenship,
+            Wallets.id, Wallets.currency, Wallets.ballance, Wallets.customerId
+        ).select {
+            (Customers.id eq id) and (Wallets.customerId eq Customers.id)
+        }
+//            .groupBy(Customers.id, Customers.name, Customers.age, Customers.citizenship)
+            .map { toCustomerWithWallet(it) }
     }
 
     suspend fun addCustomer(customer: Customer): Customer {
@@ -38,5 +50,14 @@ class CustomerRepository {
             name = row[Customers.name],
             age = row[Customers.age],
             citizenship = row[Customers.citizenship]
+        )
+
+    private fun toCustomerWithWallet(row: ResultRow): Customer =
+        Customer(
+            id = row[Customers.id],
+            name = row[Customers.name],
+            age = row[Customers.age],
+            citizenship = row[Customers.citizenship],
+            wallet = Wallet(row[Wallets.id], row[Wallets.currency], row[Wallets.ballance], row[Wallets.customerId])
         )
 }

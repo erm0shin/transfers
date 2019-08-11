@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.LongIdTable
 object Wallets : LongIdTable() {
     val currency = enumeration("currency", Currency::class)
     val ballance = long("ballance")
-    val customerId = long("customerId")
+    val customerId = long("customerId").references(Customers.id)
 }
 
 class Wallet(
